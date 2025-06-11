@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Página com Fotos e Contador</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 30px 10px;
+      text-align: center;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+    }
+
+    .frase-estilizada {
+      font-family: 'Brush Script MT', cursive, sans-serif;
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #ffeaa7;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .slideshow {
+      width: 100%;
+      max-width: 500px;
+      aspect-ratio: 5 / 3;
+      margin: 0 auto 30px auto;
+      background: white;
+      padding: 15px 15px 40px 15px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      position: relative;
+      transform: rotate(0deg);
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .slideshow:hover {
+      transform: rotate(2deg);
+      box-shadow: 0 15px 25px rgba(0,0,0,0.6);
+    }
+
+    .slideshow img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transform: rotate(-3deg);
+      transition: transform 0.3s ease;
+    }
+
+    .slideshow:hover img {
+      transform: rotate(0deg);
+    }
+
+    .legenda-polaroide {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      font-family: 'Brush Script MT', cursive, sans-serif;
+      font-size: 24px;
+      color: #c0392b;
+      text-align: center;
+    }
+
+    .contador {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      max-width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .contador-box {
+      background-color: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 12px 15px;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.2);
+      min-width: 70px;
+      flex: 1 1 70px;
+      backdrop-filter: blur(5px);
+    }
+
+    .contador-box span.valor {
+      font-size: 28px;
+      color: #ffffff;
+      display: block;
+    }
+
+    .contador-box span:last-child {
+      font-size: 14px;
+      color: #dcdde1;
+    }
+
+    .data-inicial {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #dcdde1;
+    }
+
+    @media (max-width: 600px) {
+      .contador {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        max-width: 100%;
+      }
+
+      .contador-box {
+        width: 80%;
+        min-width: unset;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="frase-estilizada">Estamos juntos há:</div>
+
+  <div class="slideshow">
+    <img id="slide" src="foto1.jpg" alt="Slideshow">
+    <div class="legenda-polaroide">Te amo ❤️</div>
+  </div>
+
+  <div class="contador" id="contador"></div>
+
+  <div class="data-inicial" id="data-inicial"></div>
+
+  <script>
+    // === SLIDESHOW ===
+    const imagens = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg']; // substitua pelas suas imagens
+    let index = 0;
+    const slide = document.getElementById('slide');
+
+    setInterval(() => {
+      index = (index + 1) % imagens.length;
+      slide.src = imagens[index];
+    }, 3000);
+
+    // === CONTADOR ===
+    const dataInicial = new Date('2024-01-20T00:00:00');
+    const contadorEl = document.getElementById('contador');
+    const dataInicialEl = document.getElementById('data-inicial');
+
+    function atualizarContador() {
+      const agora = new Date();
+
+      let anos = agora.getFullYear() - dataInicial.getFullYear();
+      let meses = agora.getMonth() - dataInicial.getMonth();
+      let dias = agora.getDate() - dataInicial.getDate();
+
+      if (dias < 0) {
+        meses--;
+        const ultimoDiaMesAnterior = new Date(agora.getFullYear(), agora.getMonth(), 0).getDate();
+        dias += ultimoDiaMesAnterior;
+      }
+
+      if (meses < 0) {
+        anos--;
+        meses += 12;
+      }
+
+      contadorEl.innerHTML = `
+        <div class="contador-box">
+          <span class="valor">${anos}</span>
+          <span>Anos</span>
+        </div>
+        <div class="contador-box">
+          <span class="valor">${meses}</span>
+          <span>Meses</span>
+        </div>
+        <div class="contador-box">
+          <span class="valor">${dias}</span>
+          <span>Dias</span>
+        </div>
+      `;
+
+      const dia = dataInicial.getDate().toString().padStart(2, '0');
+      const mes = (dataInicial.getMonth() + 1).toString().padStart(2, '0');
+      const ano = dataInicial.getFullYear();
+
+      dataInicialEl.innerText = `Contando desde: ${dia}/${mes}/${ano}`;
+    }
+
+    setInterval(atualizarContador, 1000);
+    atualizarContador();
+  </script>
+
+</body>
+</html>
